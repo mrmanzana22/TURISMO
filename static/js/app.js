@@ -4,6 +4,34 @@ function formatPrecio(precio) {
   return '$' + precio.toLocaleString('es-CO');
 }
 
+// --- LocalStorage para reservas (persistencia en Vercel)
+function getLocalReservas() {
+  try {
+    return JSON.parse(localStorage.getItem('tripfinder_reservas') || '[]');
+  } catch(e) {
+    return [];
+  }
+}
+
+function saveLocalReservas(reservas) {
+  localStorage.setItem('tripfinder_reservas', JSON.stringify(reservas));
+}
+
+function addLocalReserva(reserva) {
+  const reservas = getLocalReservas();
+  // Evitar duplicados por ID
+  const exists = reservas.find(r => r.id === reserva.id);
+  if (!exists) {
+    reservas.push(reserva);
+    saveLocalReservas(reservas);
+  }
+}
+
+function removeLocalReserva(id) {
+  const reservas = getLocalReservas().filter(r => r.id !== id);
+  saveLocalReservas(reservas);
+}
+
 // --- i18n setup
 const i18n = {
   es: {
@@ -157,7 +185,22 @@ function createSitioCard(s, isRecommended) {
 async function renderReservas(){
   const cont = document.getElementById("reservas-list");
   if(!cont) return;
-  const reservas = await fetchJson("/api/reservas");
+
+  // Usar localStorage como fuente principal (funciona en Vercel)
+  let reservas = getLocalReservas();
+
+  // Intentar sincronizar con servidor (puede fallar en Vercel serverless)
+  try {
+    const serverReservas = await fetchJson("/api/reservas");
+    // Si el servidor tiene reservas, sincronizar con localStorage
+    if (serverReservas && serverReservas.length > 0) {
+      serverReservas.forEach(r => addLocalReserva(r));
+      reservas = getLocalReservas();
+    }
+  } catch(e) {
+    console.log('Usando reservas locales');
+  }
+
   if(reservas.length===0){
     cont.innerHTML = `<p class='text-muted'>${i18n[currentLang].noReservas}</p>`;
     return;
@@ -196,17 +239,18 @@ function showReservaModal(categoria, item_id){
 
 async function deleteReserva(id){
   if(!confirm(i18n[currentLang].deleteConfirm + id + '?')) return;
+
+  // Eliminar de localStorage primero
+  removeLocalReserva(id);
+
+  // Intentar eliminar del servidor también
   try {
-    const r = await fetch('/api/reservas/'+id, { method: 'DELETE' });
-    const js = await r.json();
-    if(js.error) {
-      alert((currentLang==='en'?'Error: ':'Error: ')+js.error);
-    } else {
-      renderReservas();
-    }
+    await fetch('/api/reservas/'+id, { method: 'DELETE' });
   } catch(err) {
-    alert('Error al eliminar reserva');
+    console.log('Error al eliminar del servidor, ya eliminada localmente');
   }
+
+  renderReservas();
 }
 
 // Render Hoteles
@@ -378,6 +422,19 @@ document.addEventListener("DOMContentLoaded", ()=>{
           alert((currentLang==='en'?'Error: ':'Error: ')+js.error);
           return;
         }
+
+        // Guardar en localStorage inmediatamente
+        const reservaLocal = {
+          id: js.id,
+          categoria: categoria,
+          item_id: item_id,
+          cliente: cliente,
+          fecha: fecha,
+          personas: personas,
+          info: info,
+          item_nombre: js.item_nombre || `${categoria} #${item_id}`
+        };
+        addLocalReserva(reservaLocal);
 
         // Cerrar modal de reserva
         const modalEl = document.getElementById('reservaModal');
