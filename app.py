@@ -9,11 +9,18 @@ import math
 app = Flask(__name__, static_folder="static", static_url_path="/static")
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0  # Disable caching in development
 
-# Path to store persistent reservas
+# Detect if running on Vercel (serverless environment with read-only filesystem)
+IS_VERCEL = os.environ.get('VERCEL') == '1' or os.environ.get('VERCEL_ENV') is not None
+
+# Path to store persistent reservas (only used in local development)
 BASE_DIR = os.path.dirname(__file__)
 DATA_DIR = os.path.join(BASE_DIR, "data")
 RESERVAS_FILE = os.path.join(DATA_DIR, "reservas.json")
-os.makedirs(DATA_DIR, exist_ok=True)
+
+# Only create data directory if not on Vercel
+if not IS_VERCEL:
+    os.makedirs(DATA_DIR, exist_ok=True)
+
 _data_lock = threading.Lock()
 
 @dataclass
@@ -147,6 +154,13 @@ _next_id = 1
 
 def _load_reservas_from_disk():
     global RESERVAS, _next_id
+
+    # On Vercel, use in-memory storage only (filesystem is read-only)
+    if IS_VERCEL:
+        RESERVAS = []
+        _next_id = 1
+        return
+
     if not os.path.exists(RESERVAS_FILE):
         # create initial empty file
         with open(RESERVAS_FILE, "w", encoding="utf-8") as f:
@@ -167,6 +181,10 @@ def _load_reservas_from_disk():
 
 def _save_reservas_to_disk():
     # NOTE: This function should ONLY be called from within a _data_lock context
+    # On Vercel, skip file operations (filesystem is read-only)
+    if IS_VERCEL:
+        return
+
     data = {"next_id": _next_id, "reservas": [r.__dict__ for r in RESERVAS]}
     with open(RESERVAS_FILE, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
@@ -202,6 +220,14 @@ def create_reserva(categoria: str, item_id: int, cliente: str, fecha: str, perso
 @app.route("/")
 def index():
     return send_from_directory("static/pages", "index.html")
+
+@app.route("/api/info")
+def api_info():
+    """Return environment info for the frontend"""
+    return jsonify({
+        "is_vercel": IS_VERCEL,
+        "message": "Las reservas se guardan en memoria (demo mode)" if IS_VERCEL else "Las reservas se guardan en archivo"
+    })
 
 @app.route("/reservas")
 def reservas_page():
