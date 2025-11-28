@@ -8,6 +8,13 @@
   ],
   "routes": [
     {
+      "src": "/static/pages/(.*)\\.html",
+      "dest": "app.py",
+      "headers": {
+        "Cache-Control": "no-cache, no-store, must-revalidate"
+      }
+    },
+    {
       "src": "/(.*)",
       "dest": "app.py"
     }
