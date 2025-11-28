@@ -1,0 +1,25 @@
+📦 LISTA DE ARCHIVOS QUE DEBES SUBIR A PYTHONANYWHERE
+=====================================================
+
+En la carpeta raíz (app_turistica/):
+  ✅ app.py
+  ✅ requirements.txt
+
+Carpeta: static/css/
+  ✅ styles.css
+
+Carpeta: static/js/
+  ✅ app.js
+
+Carpeta: static/pages/
+  ✅ index.html
+  ✅ reservas.html
+
+Carpeta: data/
+  (Esta carpeta debe existir pero puede estar vacía - se crearán las reservas automáticamente)
+
+=====================================================
+TOTAL: 6 archivos principales + estructura de carpetas
+=====================================================
+
+NOTA: NO subas la carpeta .venv ni __pycache__ - solo los archivos listados arriba
