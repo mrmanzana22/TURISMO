@@ -398,6 +398,21 @@ document.addEventListener("DOMContentLoaded", ()=>{
   }
 });
 
+// Actualizar reservas cuando la página se muestra (incluyendo navegación con botón atrás)
+window.addEventListener('pageshow', (event) => {
+  // Si la página viene del caché (bfcache), recargar las reservas
+  if (event.persisted) {
+    renderReservas();
+  }
+});
+
+// También actualizar cuando la página se hace visible (cambio de pestaña)
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') {
+    renderReservas();
+  }
+});
+
 function applyLanguage(){
   document.querySelectorAll('#lang-es, #lang-en').forEach(b=>b.classList.remove('active'));
   const btn = document.getElementById('lang-'+currentLang);
