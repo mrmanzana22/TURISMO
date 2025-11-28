@@ -208,9 +208,348 @@ body {
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Responsive */
-@media (max-width: 576px){
-  .hero { padding: 32px 20px; text-align: center; }
-  .success-checkmark { width: 60px; height: 60px; }
-  .success-checkmark .check-icon { width: 60px; height: 60px; }
+/* ========================================
+   RESPONSIVE DESIGN - Mobile First
+   ======================================== */
+
+/* Navbar mobile */
+.navbar {
+  padding: 0.75rem 0;
+}
+
+.navbar-brand {
+  font-size: 1.25rem;
+}
+
+.navbar-toggler {
+  border: none;
+  padding: 0.5rem;
+}
+
+.navbar-toggler:focus {
+  box-shadow: none;
+}
+
+.navbar-toggler-icon {
+  width: 1.5em;
+  height: 1.5em;
+}
+
+/* Mobile menu styling */
+@media (max-width: 991.98px) {
+  .navbar-collapse {
+    background: white;
+    padding: 1rem;
+    margin-top: 0.5rem;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+  }
+
+  .navbar-nav {
+    gap: 0.5rem;
+  }
+
+  .navbar-nav .nav-link,
+  .navbar-nav .btn {
+    padding: 0.75rem 1rem;
+    text-align: center;
+    border-radius: 8px;
+  }
+
+  .navbar .btn-group {
+    justify-content: center;
+    margin-top: 0.5rem;
+  }
+}
+
+/* Cards responsive */
+.card-sitio {
+  margin-bottom: 1rem;
+}
+
+.card-sitio .card-body {
+  padding: 1.25rem;
+}
+
+.card-sitio h5 {
+  font-size: 1.1rem;
+  line-height: 1.4;
+}
+
+.card-sitio .badge {
+  font-size: 0.75rem;
+}
+
+/* Map responsive */
+#map {
+  height: 300px;
+  min-height: 250px;
+}
+
+/* Tablet and up */
+@media (min-width: 768px) {
+  #map {
+    height: 400px;
+  }
+}
+
+/* Small devices (phones, 576px and down) */
+@media (max-width: 576px) {
+  /* Hero section */
+  .hero {
+    padding: 24px 16px;
+    text-align: center;
+    border-radius: 12px;
+  }
+
+  .hero h1 {
+    font-size: 1.5rem;
+    margin-bottom: 8px;
+  }
+
+  .hero p {
+    font-size: 0.9rem;
+    margin-bottom: 0;
+  }
+
+  .hero .btn {
+    margin-top: 1rem;
+    width: 100%;
+  }
+
+  /* Section titles */
+  h2, .h2 {
+    font-size: 1.35rem;
+  }
+
+  h3, .h3 {
+    font-size: 1.15rem;
+  }
+
+  /* Cards */
+  .card-sitio {
+    border-radius: 12px;
+  }
+
+  .card-sitio .card-body {
+    padding: 1rem;
+  }
+
+  .card-sitio h5 {
+    font-size: 1rem;
+  }
+
+  .card-sitio p {
+    font-size: 0.85rem;
+  }
+
+  .card-sitio .badge {
+    font-size: 0.7rem;
+    padding: 4px 8px;
+  }
+
+  .card-sitio .badge-precio {
+    padding: 5px 10px;
+    font-size: 0.8rem;
+  }
+
+  .card-sitio .btn-sm {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.8rem;
+  }
+
+  /* Disable hover effects on touch devices */
+  .card-sitio:hover {
+    transform: none;
+  }
+
+  /* Map */
+  #map {
+    height: 250px;
+    border-radius: 8px;
+  }
+
+  /* Modals */
+  .modal-dialog {
+    margin: 0.5rem;
+  }
+
+  .modal-content {
+    border-radius: 16px;
+  }
+
+  .modal-body {
+    padding: 1.25rem;
+  }
+
+  .modal-header,
+  .modal-footer {
+    padding: 1rem 1.25rem;
+  }
+
+  /* Welcome modal */
+  #welcomeModal .modal-body {
+    padding: 1rem;
+  }
+
+  #welcomeModal .lead {
+    font-size: 1rem;
+  }
+
+  #welcomeModal .form-label {
+    font-size: 0.9rem;
+  }
+
+  #welcomeModal .btn-group {
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+
+  #welcomeModal .btn-group .btn {
+    flex: 1 1 auto;
+    min-width: 80px;
+    font-size: 0.85rem;
+    padding: 0.5rem;
+  }
+
+  /* Success checkmark */
+  .success-checkmark {
+    width: 60px;
+    height: 60px;
+  }
+
+  .success-checkmark .check-icon {
+    width: 60px;
+    height: 60px;
+  }
+
+  /* Confirmation modal */
+  #confirmationModal .modal-body {
+    padding: 2rem 1.5rem;
+  }
+
+  #confirmationModal h3 {
+    font-size: 1.25rem;
+  }
+
+  #confirmationModal .lead {
+    font-size: 0.95rem;
+  }
+
+  /* Form controls */
+  .form-control,
+  .form-select {
+    font-size: 16px; /* Prevents zoom on iOS */
+    padding: 0.6rem 0.75rem;
+  }
+
+  /* Buttons */
+  .btn {
+    padding: 0.6rem 1rem;
+  }
+
+  .btn-lg {
+    padding: 0.75rem 1.25rem;
+    font-size: 1rem;
+  }
+
+  /* Reservas page */
+  #reservas-list .card {
+    border-radius: 12px;
+  }
+
+  #reservas-list .card-body {
+    padding: 1rem;
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 0.75rem;
+  }
+
+  #reservas-list .card-body > div:last-child {
+    width: 100%;
+  }
+
+  #reservas-list .btn {
+    width: 100%;
+  }
+
+  /* Footer */
+  .site-footer {
+    font-size: 0.8rem;
+    text-align: center;
+  }
+
+  /* Container padding */
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  /* Section spacing */
+  section {
+    margin-bottom: 1.5rem;
+  }
+
+  hr {
+    margin: 1.5rem 0;
+  }
+}
+
+/* Extra small devices (very small phones) */
+@media (max-width: 375px) {
+  .hero h1 {
+    font-size: 1.3rem;
+  }
+
+  .card-sitio h5 {
+    font-size: 0.95rem;
+  }
+
+  #welcomeModal .btn-group .btn {
+    font-size: 0.75rem;
+    padding: 0.4rem;
+  }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .card-sitio:hover {
+    transform: none;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1) !important;
+  }
+
+  .btn:hover {
+    transform: none;
+  }
+
+  /* Larger touch targets */
+  .btn {
+    min-height: 44px;
+  }
+
+  .form-control,
+  .form-select {
+    min-height: 44px;
+  }
+}
+
+/* Landscape mode on mobile */
+@media (max-height: 500px) and (orientation: landscape) {
+  .hero {
+    padding: 16px;
+  }
+
+  .modal-body {
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+}
+
+/* Print styles */
+@media print {
+  .navbar,
+  .btn,
+  #map {
+    display: none !important;
+  }
 }
