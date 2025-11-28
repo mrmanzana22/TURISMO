@@ -1,3 +1,9 @@
+// --- Formatear precios en formato colombiano
+function formatPrecio(precio) {
+  if (precio === 0) return null;
+  return '$' + precio.toLocaleString('es-CO');
+}
+
 // --- i18n setup
 const i18n = {
   es: {
@@ -124,6 +130,7 @@ async function renderSitios(){
 
 function createSitioCard(s, isRecommended) {
   const badge = isRecommended ? '<span class="badge bg-warning text-dark ms-2"><i class="bi bi-star-fill"></i> Recomendado</span>' : '';
+  const precioFormateado = formatPrecio(s.precio);
   return `
     <div class="col-sm-6 col-md-4 fade-in">
       <div class="card card-sitio mb-3 shadow-sm h-100">
@@ -136,7 +143,7 @@ function createSitioCard(s, isRecommended) {
             ${s.acepta_mascotas ? '<span class="badge bg-success"><i class="bi bi-heart-fill"></i> Mascotas</span>' : ''}
           </div>
           <div class="mt-auto d-flex justify-content-between align-items-center">
-            <span class="badge badge-precio">${s.precio > 0 ? ('$' + s.precio) : (currentLang === 'es' ? 'Gratis' : 'Free')}</span>
+            <span class="badge badge-precio">${precioFormateado || (currentLang === 'es' ? 'Gratis' : 'Free')}</span>
             <button class="btn btn-sm btn-primary" onclick="showReservaModal('sitio', ${s.id})">
               <i class="bi bi-calendar-plus"></i> ${i18n[currentLang].reserveBtn}
             </button>
@@ -159,7 +166,7 @@ async function renderReservas(){
     `<div class='col-12'>
        <div class='card'><div class='card-body d-flex justify-content-between align-items-center'>
          <div>
-           <strong>R${r.id}</strong> — ${r.categoria} #${r.item_id} <br>
+           <strong>R${r.id}</strong> — ${r.item_nombre} <br>
            <small class='text-muted'>${r.cliente} · ${r.fecha} · ${r.personas} ${i18n[currentLang].personasLabel.toLowerCase()}</small>
          </div>
          <div>
@@ -207,14 +214,16 @@ async function renderHoteles(){
   const cont = document.getElementById("hoteles-list");
   if(!cont) return;
   const hoteles = await fetchJson("/api/hoteles");
-  cont.innerHTML = hoteles.map(h => `
+  cont.innerHTML = hoteles.map(h => {
+    const precioFormateado = formatPrecio(h.precio_noche);
+    return `
     <div class="col-sm-6 col-md-4">
       <div class="card card-sitio mb-3 shadow-sm h-100">
         <div class="card-body d-flex flex-column">
           <h5 class="mb-1">${h.nombre}</h5>
           <p class="mb-2 text-muted small">${h.direccion}</p>
           <div class="mb-3">
-            <span class="badge badge-precio">$${h.precio_noche} ${i18n[currentLang].porNoche}</span>
+            <span class="badge badge-precio">${precioFormateado} ${i18n[currentLang].porNoche}</span>
             <span class="badge bg-secondary ms-1">${i18n[currentLang].disponibilidad}: ${h.disponibilidad}</span>
           </div>
           <div class="mb-2">
@@ -228,7 +237,7 @@ async function renderHoteles(){
         </div>
       </div>
     </div>
-  `).join("");
+  `;}).join("");
 }
 
 // Render Transporte
@@ -236,20 +245,22 @@ async function renderTransporte(){
   const cont = document.getElementById("transporte-list");
   if(!cont) return;
   const transportes = await fetchJson("/api/transporte");
-  cont.innerHTML = transportes.map(t => `
+  cont.innerHTML = transportes.map(t => {
+    const precioFormateado = formatPrecio(t.precio_por_persona);
+    return `
     <div class="col-sm-6 col-md-4">
       <div class="card card-sitio mb-3 shadow-sm h-100">
         <div class="card-body">
           <h6 class="mb-1 text-primary"><i class="bi bi-bus-front"></i> ${t.tipo}</h6>
           <p class="mb-2"><strong>${t.origen}</strong> → <strong>${t.destino}</strong></p>
           <div class="d-flex justify-content-between align-items-center">
-            <span class="badge badge-precio">$${t.precio_por_persona}</span>
+            <span class="badge badge-precio">${precioFormateado}</span>
             <small class="text-muted"><i class="bi bi-clock"></i> ${t.duracion_min} ${i18n[currentLang].minutos}</small>
           </div>
         </div>
       </div>
     </div>
-  `).join("");
+  `;}).join("");
 }
 
 // Render Map
@@ -269,12 +280,13 @@ async function renderMap(){
 
   sitios.forEach(s => {
     const marker = L.marker([s.lat, s.lon]).addTo(map);
+    const precioFormateado = formatPrecio(s.precio);
     marker.bindPopup(`
       <div style="min-width: 200px;">
         <h6 class="mb-1">${s.nombre}</h6>
         <p class="mb-1 small">${s.descripcion}</p>
         <p class="mb-1 small text-muted">${s.direccion}</p>
-        <span class="badge badge-precio">${s.precio > 0 ? '$'+s.precio : (currentLang==='es'?'Gratis':'Free')}</span>
+        <span class="badge badge-precio">${precioFormateado || (currentLang==='es'?'Gratis':'Free')}</span>
       </div>
     `);
   });
