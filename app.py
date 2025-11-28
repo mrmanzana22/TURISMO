@@ -292,7 +292,9 @@ def api_reservas():
         info = data.get("info", "")
 
         r = create_reserva(categoria, item_id, cliente, fecha, personas, info)
-        return jsonify(r.__dict__), 201
+        result = r.__dict__.copy()
+        result['item_nombre'] = get_item_nombre(categoria, item_id)
+        return jsonify(result), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
